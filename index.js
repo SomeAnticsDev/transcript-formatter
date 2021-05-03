@@ -20,6 +20,10 @@ mammoth.extractRawText({path: filename})
 		/** @type {String} */
 		let transcript = result.value;
 
+		// Trim
+		transcript = transcript.trim();
+		transcript = transcript.replace(/.*[.\n]*\[00:00:00] /g, '');
+
 		// Titlecase and bold speaker names
 		transcript = transcript.replace(/^(\[[\d:]+\] )?([A-Z ]+:)/gm, (match, timecode, speaker) => {
 			let formattedSpeaker = formatSpeaker(speaker);
@@ -29,11 +33,12 @@ mammoth.extractRawText({path: filename})
 			return `**${formattedSpeaker}**`;
 		});
 
-		// Italicize timecodes and bracketed parentheticals
-		transcript = transcript.replace(/(?<brackets>\[[^\n]+\])/g, '*$<brackets>*');
-
 		// Escape HTML tags as inline code
-		transcript = transcript.replace(/(?<!`)(?<tag><[^\n>]+>)(?!`)/g, '`$<tag>`');
+		transcript = transcript.replace(/(?<!`)(?<tag><[^\n>]+>)(?!`)/gm, '`$<tag>`');
+
+		// Italicize timecodes and bracketed parentheticals
+		transcript = transcript.replace(/(?<timecode>\[[\d:]+\])/g, '<i class="timecode">$<timecode></i>');
+		transcript = transcript.replace(/(?<brackets>\[[^:]+\])/g, '<i class="brackets">$<brackets></i>');
 
 		clipboardy.write(transcript)
 			.then(() => console.log('Copied formatted transcript to clipboard!'))
