@@ -8,8 +8,27 @@ if (process.argv.length < 3) {
 	process.exit(1);
 }
 
+/**
+ * Map of custom labels for speakers whose names defy standard capitalization rules,
+ * or for cases where the docs speaker label should be different from the captions speaker label.
+ * @type {Object<string, string>}
+ */
+const SPEAKER_OVERRIDES = {
+	'B. HOLMES:': 'Ben Holmes:',
+	'B. MYERS:': 'Ben Myers:',
+	'VOICEOVER': 'VoiceOver:'
+};
+
+/**
+ * Titlecases a speaker label, or supplies an override.
+ * @param {string} speaker Speaker label in all uppercase, followed by a colon
+ * @returns {string} Speaker label formatted in titlecase
+ */
 function formatSpeaker(speaker) {
-	if (speaker === 'VOICEOVER:') return 'VoiceOver:';
+	if (SPEAKER_OVERRIDES[speaker]) {
+		return SPEAKER_OVERRIDES[speaker];
+	}
+
 	return toTitleCase(speaker.toLowerCase());
 }
 
@@ -25,7 +44,7 @@ mammoth.extractRawText({path: filename})
 		transcript = transcript.replace(/.*[.\n]*\[00:00:00] /g, '');
 
 		// Titlecase and bold speaker names
-		transcript = transcript.replace(/^(\[[\d:]+\] )?([A-Z ]+:)/gm, (match, timecode, speaker) => {
+		transcript = transcript.replace(/^(\[[\d:]+\] )?([A-Z \.]+:)/gm, (match, timecode, speaker) => {
 			let formattedSpeaker = formatSpeaker(speaker);
 			if (timecode) {
 				return `${timecode.trim()} **${formattedSpeaker}**`;
