@@ -14,8 +14,10 @@ if (process.argv.length < 3) {
  * @type {Object<string, string>}
  */
 const SPEAKER_OVERRIDES = {
-	'B. HOLMES:': 'Ben Holmes:',
-	'B. MYERS:': 'Ben Myers:',
+	'B. HOLMES': 'Ben Holmes:',
+	'B. MYERS': 'Ben Myers:',
+	'JAWA': 'JAWS:',
+	'NVDA': 'NVDA:',
 	'VOICEOVER': 'VoiceOver:'
 };
 
